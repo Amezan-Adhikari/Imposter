@@ -2,6 +2,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Users, Clock, Eye, ArrowRight, Plus, Minus, Play, RotateCcw, UserMinus } from 'lucide-react';
+import Link from 'next/link';
 
 const GAME_WORDS = [
   "pen", "chair", "table", "bottle", "phone", "lamp", "mirror", "cup", "spoon", "pencil",
@@ -115,12 +116,12 @@ const WordImposterGame = () => {
         {/* Navigation */}
         <nav className="px-6 py-4 bg-white/70 backdrop-blur-sm border-b border-gray-200/50">
           <div className="max-w-6xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <Link href={"/"} className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-400 rounded-lg flex items-center justify-center">
                 <Eye className="w-5 h-5 text-white" />
               </div>
               <span className="text-lg font-semibold">Word Imposter</span>
-            </div>
+            </Link>
             <div className="text-sm text-gray-600">Setup Game</div>
           </div>
         </nav>
@@ -157,7 +158,7 @@ const WordImposterGame = () => {
                 onChange={(e) => setNewPlayerName(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Enter player name"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className=" md:flex-1 w-3/4 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button
                 onClick={addPlayer}
