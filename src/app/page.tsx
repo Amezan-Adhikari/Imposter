@@ -1,230 +1,252 @@
-//@ts-nocheck
-"use client"
-import { useState } from "react";
+import React from 'react';
+import { Users, Clock, Heart, Play, Eye, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-const PLAYERS = ["Amezan", "Ashim", "Mukesh", "Sandesh"];
-
-function getRandomTurn(players){
-  const randomIndex = Math.floor(Math.random() * players.length);
-  return players[randomIndex];
-}
-
-function getGameWord(){
-  const everydayObjects = [
-  "pen", "chair", "table", "bottle", "phone", "lamp", "mirror", "cup", "spoon", "pencil",
-  "notebook", "shoe", "sock", "towel", "toothbrush", "soap", "plate", "fork", "bag", "hat",
-  "glove", "clock", "key", "remote", "wallet", "book", "fan", "bed", "pillow", "blanket",
-  "scissors", "comb", "brush", "laptop", "charger", "mouse", "keyboard", "monitor", "stapler", "tape",
-  "eraser", "ruler", "marker", "mug", "pan", "bowl", "napkin", "umbrella", "shampoo", "toothpaste",
-  "hanger", "mirror", "bucket", "broom", "dustpan", "mop", "soap", "detergent", "tissue", "razor",
-  "candle", "sponge", "lighter", "match", "tray", "clock", "cushion", "curtain", "lens", "tripod",
-  "helmet", "bottle opener", "can", "jar", "basket", "bin", "flashlight", "screwdriver", "hammer", "pliers",
-  "nail", "tape measure", "ladder", "toolbox", "glasses", "watch", "belt", "jacket", "scarf", "jeans",
-  "umbrella", "thermometer", "iron", "kettle", "blender", "microwave", "toaster", "fan", "vacuum", "speaker"
-];
-
-  const word = Math.floor(Math.random() * everydayObjects.length);
-  return everydayObjects[word];
-}
-
-function getImposter(players){
-  const randomIndex = Math.floor(Math.random() * players.length);
-  return players[randomIndex];
-}
-
-function getRand(x){
-   return Math.floor(Math.random() * x);
-}
-
-export default function Home() {
-  const [players, setPlayers] = useState(PLAYERS);
-  const [turn, setTurn] = useState("");
-  const [gameWord, setGameWord] = useState("");
-  const [imposter, setImposter] = useState("");
-  const [hasStarted, setHasStarted] = useState(false);
-  const [seeResult, setSeeResult] = useState(false);
-  const [usedPlayers, setUsedPlayers] = useState([]);
-  const [newPlayerName, setNewPlayerName] = useState("");
-  const [showPlayerManagement, setShowPlayerManagement] = useState(false);
-
-  function changeTurn(){
-      setSeeResult(false);
-      const newUsedPlayers = [...usedPlayers, turn];
-      setUsedPlayers(newUsedPlayers);
-
-      const availablePlayers = players.filter(player => !newUsedPlayers.includes(player));
-      
-      if(availablePlayers.length > 0){
-        const randomIndex = getRand(availablePlayers.length);
-        setTurn(availablePlayers[randomIndex]);
-      } else {
-        // Game round finished, reset for new round
-        setHasStarted(false);
-        setUsedPlayers([]);
-        setTurn("");
-        setGameWord("");
-        setImposter("");
-      }
-  }
-
-  function seeWord(){
-    if(turn === imposter){
-      return "IMPOSTER"
-    }
-    else{
-      return gameWord;
-    }
-  }
-
-  function addPlayer(){
-    if(newPlayerName.trim() && !players.includes(newPlayerName.trim())){
-      setPlayers([...players, newPlayerName.trim()]);
-      setNewPlayerName("");
-    }
-  }
-
-  function removePlayer(playerToRemove){
-    if(players.length > 2){ // Keep at least 2 players
-      setPlayers(players.filter(player => player !== playerToRemove));
-    }
-  }
-
-  function handleKeyPress(e){
-    if(e.key === 'Enter'){
-      addPlayer();
-    }
-  }
-
-  function togglePlayerManagement(){
-    setShowPlayerManagement(!showPlayerManagement);
-  }
-
-  function startGame(){
-    setHasStarted(true); 
-    setTurn(getRandomTurn(players)); 
-    setGameWord(getGameWord());
-    setImposter(getImposter(players));
-    setUsedPlayers([]);
-    setShowPlayerManagement(false); // Close player management when game starts
-  }
-  
+const Landing = () => {
   return (
-   <div className="p-4 max-w-md mx-auto">
-      <h1 className="text-center text-2xl text-slate-900 font-black mt-2">Imposter Game</h1>
-
-      <div className="mt-3 flex items-center gap-2 justify-center">
-        <span>Number of players:</span>
-        <button 
-          onClick={togglePlayerManagement}
-          disabled={hasStarted}
-          className={`px-3 py-1 rounded transition-colors ${
-            hasStarted 
-              ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-              : 'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'
-          }`}
-        >
-          {players.length}
-        </button>
-      </div>
-
-      {showPlayerManagement && !hasStarted && (
-        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-3 text-center">Manage Players</h3>
-          
-          {/* Add Player */}
-          <div className="mb-4">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newPlayerName}
-                onChange={(e) => setNewPlayerName(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Enter player name"
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-              <button
-                onClick={addPlayer}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-              >
-                Add
-              </button>
+    <div className="min-h-screen bg-[#f8f9fa] text-gray-900 font-[poppins]">
+      {/* Navigation */}
+      <nav className="px-6 py-4 bg-white/70 backdrop-blur-sm border-b border-gray-200/50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-400 rounded-lg flex items-center justify-center">
+              <Eye className="w-5 h-5 text-white" />
             </div>
+            <span className="text-lg font-semibold">SUS GAMES</span>
           </div>
+          <div className="text-sm text-gray-600">Game Platform</div>
+        </div>
+      </nav>
 
-          {/* Player List */}
-          <div className="space-y-2 mb-4">
-            {players.map((player, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
-                <span className="font-medium">{player}</span>
-                <button
-                  onClick={() => removePlayer(player)}
-                  disabled={players.length <= 2}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
-                    players.length <= 2 
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                      : 'bg-red-500 text-white hover:bg-red-600'
-                  }`}
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
+      {/* Hero Section */}
+      <section className="px-6 py-16 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm font-medium mb-8">
+              <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
+              Live Now
+            </div>
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+              Find the <span className="text-orange-500">Sus</span> One Out
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+              Play social deduction games with friends on a single device. 
+              Trust no one, suspect everyone.
+            </p>
           </div>
           
-          <div className="text-center">
-            <button
-              onClick={() => setShowPlayerManagement(false)}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
-            >
-              Done
-            </button>
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            <div className="px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200 text-sm text-gray-700">
+              <Users className="w-4 h-4 inline mr-2" />
+              Single Device
+            </div>
+            <div className="px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200 text-sm text-gray-700">
+              4-12 Players
+            </div>
+            <div className="px-4 py-2 bg-white rounded-full shadow-sm border border-gray-200 text-sm text-gray-700">
+              No Download
+            </div>
           </div>
         </div>
-      )}
+      </section>
 
-      <div className="mt-20 flex items-center justify-center">
-          {!hasStarted && (
-            <button 
-              onClick={startGame}
-              className="p-2 active:scale-95 bg-green-700 text-white rounded-full px-4 hover:bg-green-800 transition-colors"
-            >
-              Start Game
-            </button>
-          )}
-      </div>
+      {/* Quote Section */}
+      <section className="px-6 py-16 bg-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <blockquote className="text-xl md:text-2xl font-light leading-relaxed text-gray-700 italic">
+            "Trust the crew or play the spy, speak the truth or tell a lie. 
+            One by one, the lights go dim — can you tell who's not like them?"
+          </blockquote>
+        </div>
+      </section>
 
-      {hasStarted && (
-        <div>
-            <div className="mt-20 flex flex-col gap-2 text-4xl font-bold items-center justify-center">
-                {turn}'s Turn
-                <span className="text-xs font-medium">hand over the phone</span>
-            </div>
-            <div className="mt-20 flex items-center justify-center">
-              <button 
-                onClick={() => setSeeResult(true)} 
-                className="p-2 active:scale-95 bg-green-700 text-white rounded-full px-4 hover:bg-green-800 transition-colors"
-              >
-                I got the phone
-              </button>
-            </div>
-
-            {seeResult && (
-              <div className="flex items-center justify-center flex-col gap-2">
-                <div className="mt-20 text-center text-xl font-bold uppercase">
-                  {seeWord()}
+      {/* Games Section */}
+      <section className="px-6 py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Available Games
+            </h2>
+            <p className="text-gray-600">Choose your game and start the fun</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Word Imposter Game Card */}
+            <div className="group bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-300">
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl flex items-center justify-center mb-4">
+                  <Play className="w-6 h-6 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Word Imposter</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  Everyone gets a word except one player. Find the imposter through discussion.
+                </p>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <Users className="w-4 h-4" />
+                    <span>Players</span>
+                  </div>
+                  <span className="font-medium text-gray-900">4-12</span>
                 </div>
                 
-                <button 
-                  onClick={changeTurn} 
-                  className="p-2 active:scale-95 bg-green-700 text-white rounded-full px-4 hover:bg-green-800 transition-colors"
-                >
-                  OK
-                </button>
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <Clock className="w-4 h-4" />
+                    <span>Duration</span>
+                  </div>
+                  <span className="font-medium text-gray-900">5-10 min</span>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2 text-gray-500">
+                    <Heart className="w-4 h-4" />
+                    <span>Rating</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Heart
+                        key={i}
+                        className={`w-3 h-3 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
-            )}
-        </div>
-      )}
+              
+              <Link href={"/wordimposter"} className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
+                <Play className="w-4 h-4" />
+                Play Now
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </Link>
+            </div>
 
-   </div>
+            {/* Coming Soon Card 1 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 opacity-60">
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                  <div className="text-2xl">🎭</div>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Chor Police</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Secret roles, hidden agendas. Can you complete your mission?
+                </p>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Players</span>
+                  <span className="text-gray-400">4-15</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Duration</span>
+                  <span className="text-gray-400">10-20 min</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Status</span>
+                  <span className="text-orange-500 font-medium">Coming Soon</span>
+                </div>
+              </div>
+              
+              <button className="w-full bg-gray-200 text-gray-500 font-medium py-3 px-6 rounded-xl cursor-not-allowed">
+                Coming Soon
+              </button>
+            </div>
+
+            {/* Coming Soon Card 2 */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 opacity-60">
+              <div className="mb-6">
+                <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-4">
+                  <div className="text-2xl">🔍</div>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Coming Soon...</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                  Solve clues together while one player sabotages the investigation.
+                </p>
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Players</span>
+                  <span className="text-gray-400">5-10</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Duration</span>
+                  <span className="text-gray-400">15-25 min</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Status</span>
+                  <span className="text-orange-500 font-medium">Coming Soon</span>
+                </div>
+              </div>
+              
+              <button className="w-full bg-gray-200 text-gray-500 font-medium py-3 px-6 rounded-xl cursor-not-allowed">
+                Coming Soon
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="px-6 py-16 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-12">
+            Why Choose SUS Games?
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Users className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Single Device</h3>
+              <p className="text-sm text-gray-600">
+                Pass one phone around. No downloads, no setup required.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Clock className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Quick Games</h3>
+              <p className="text-sm text-gray-600">
+                Perfect for parties, breaks, or anytime you need quick fun.
+              </p>
+            </div>
+            
+            <div className="text-center">
+              <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-6 h-6 text-orange-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Social Fun</h3>
+              <p className="text-sm text-gray-600">
+                Build trust, create suspicion, and have unforgettable moments.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="px-6 py-8 bg-gray-50 border-t border-gray-200">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-red-400 rounded-lg flex items-center justify-center">
+              <Eye className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-semibold text-gray-900">SUS GAMES</span>
+          </div>
+          <p className="text-sm text-gray-600">
+            The world's best social deduction game platform
+          </p>
+        </div>
+      </footer>
+    </div>
   );
-}
+};
+
+export default Landing;
